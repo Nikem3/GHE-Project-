@@ -1,0 +1,33 @@
+/* ghe-portal/src/pages/public/Home/sections/StatsRow.module.css */
+.section {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  flex-wrap: wrap;
+}
+
+.stat {
+  text-align: center;
+}
+
+.value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--stat-color);
+  margin-bottom: 0.3rem;
+}
+
+.label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}

@@ -1,0 +1,89 @@
+/* ghe-portal/src/pages/public/Home/sections/Hero.module.css */
+.hero {
+  background: radial-gradient(ellipse at 50% 0%, rgba(0, 112, 243, 0.12) 0%, transparent 70%),
+              var(--bg-primary);
+  padding: 6rem 2rem 5rem;
+  text-align: center;
+}
+
+.inner {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: var(--radius-pill);
+  color: var(--accent-cyan);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+}
+
+.headline {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-bottom: 1.2rem;
+}
+
+.gradient {
+  background: var(--gradient-cta);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sub {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  max-width: 540px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.7;
+}
+
+.ctas {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaPrimary {
+  padding: 0.75rem 2rem;
+  background: var(--gradient-cta);
+  color: #fff;
+  border-radius: var(--radius-card);
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.ctaPrimary:hover {
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+.ctaGhost {
+  padding: 0.75rem 2rem;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.ctaGhost:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  text-decoration: none;
+}

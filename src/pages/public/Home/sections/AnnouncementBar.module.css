@@ -1,0 +1,15 @@
+/* ghe-portal/src/pages/public/Home/sections/AnnouncementBar.module.css */
+.bar {
+  background: var(--gradient-cta);
+  color: #fff;
+  text-align: center;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.bar a {
+  color: #fff;
+  font-weight: 700;
+  text-decoration: underline;
+}

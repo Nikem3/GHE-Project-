@@ -1,0 +1,81 @@
+/* ghe-portal/src/components/Navbar/Navbar.module.css */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 60px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  color: var(--accent-cyan);
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+
+.links {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+.links a {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.links a:hover {
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.themeToggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem 0.6rem;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.themeToggle:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.loginBtn {
+  padding: 0.4rem 1.2rem;
+  background: var(--gradient-cta);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.loginBtn:hover {
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .links {
+    display: none;
+  }
+}
