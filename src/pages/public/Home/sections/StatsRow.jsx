@@ -1,9 +1,10 @@
 import styles from './StatsRow.module.css'
 
 const STATS = [
-  { value: '50+', label: 'Courses Available', color: 'var(--accent-cyan)' },
-  { value: '3', label: 'Study Levels', color: 'var(--accent-purple)' },
-  { value: '< 24h', label: 'Enquiry Response', color: 'var(--accent-blue)' },
+  { value: '1,200', suffix: '+',  label: 'Students Enrolled' },
+  { value: '18',    suffix: '',   label: 'Accredited Programs' },
+  { value: '95',    suffix: '%',  label: 'Enquiry Response Rate' },
+  { value: '48',    suffix: 'hr', label: 'Avg. Response Time' },
 ]
 
 export default function StatsRow() {
@@ -12,8 +13,10 @@ export default function StatsRow() {
       <div className={styles.inner}>
         {STATS.map((s) => (
           <div key={s.label} className={styles.stat}>
-            <span className={styles.value} style={{ '--stat-color': s.color }}>{s.value}</span>
-            <span className={styles.label}>{s.label}</span>
+            <div className={styles.num}>
+              {s.value}<span className={styles.suffix}>{s.suffix}</span>
+            </div>
+            <div className={styles.label}>{s.label}</div>
           </div>
         ))}
       </div>

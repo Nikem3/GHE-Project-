@@ -1,26 +1,44 @@
-/* ghe-portal/src/styles/tokens.css */
-:root {
-  --bg-primary: #0d1117;
-  --bg-surface: #161b22;
-  --bg-elevated: #21262d;
-  --border: #30363d;
-  --accent-blue: #0070f3;
-  --accent-cyan: #00d4ff;
-  --accent-purple: #7928ca;
-  --gradient-cta: linear-gradient(90deg, #0070f3, #7928ca);
-  --text-primary: #cdd9e5;
-  --text-muted: #8b949e;
-  --radius-card: 6px;
-  --radius-pill: 20px;
-  --radius-input: 4px;
-  --font-sans: 'Inter', system-ui, sans-serif;
-}
+/* GHE Portal — design tokens (light + orange) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-[data-theme="light"] {
-  --bg-primary: #ffffff;
-  --bg-surface: #f6f8fa;
-  --bg-elevated: #eaeef2;
-  --border: #d0d7de;
-  --text-primary: #1f2328;
-  --text-muted: #636c76;
+:root {
+  /* Brand */
+  --orange:        #E8530C;
+  --orange-hover:  #C94809;
+  --orange-light:  #FF7035;
+  --orange-tint:   #FEF3EC;
+  --orange-border: #FCDBC8;
+
+  /* Backgrounds */
+  --bg-primary:  #FFFFFF;
+  --bg-warm:     #FAF8F6;
+  --bg-section:  #F4F1EE;
+  --bg-dark:     #1C1C2E;
+  --bg-dark-2:   #2D2D45;
+
+  /* Text */
+  --text-primary: #1C1C2E;
+  --text-body:    #4A4A65;
+  --text-muted:   #8A8A9E;
+
+  /* Borders */
+  --border: #E8E4E0;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.14);
+  --shadow-xl: 0 24px 80px rgba(0,0,0,0.18);
+
+  /* Radius */
+  --radius:      12px;
+  --radius-lg:   18px;
+  --radius-xl:   24px;
+  --radius-pill: 999px;
+
+  /* Gradient */
+  --gradient-cta: linear-gradient(135deg, #E8530C, #FF7035);
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, sans-serif;
 }
