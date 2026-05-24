@@ -2,3 +2,10 @@ node_modules
 dist
 .env
 .env.local
+
+# Backend
+server/.env
+server/ghe.db
+
+# Brainstorm artefacts
+.superpowers/
