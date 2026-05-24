@@ -6,14 +6,12 @@ db.prepare('DELETE FROM courses').run()
 db.prepare('DELETE FROM users').run()
 db.prepare("DELETE FROM sqlite_sequence WHERE name IN ('users','courses')").run()
 
-const hash = bcrypt.hashSync('Password123!', 10)
-
 const insertUser = db.prepare(
   'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)'
 )
-insertUser.run('Alex Johnson',   'student@ghe.edu.au', hash, 'student')
-insertUser.run('Sarah Williams', 'staff@ghe.edu.au',   hash, 'staff')
-insertUser.run('Michael Chen',   'admin@ghe.edu.au',   hash, 'admin')
+insertUser.run('Nikem Parajuli',  'nikem@ghe.edu.au',  bcrypt.hashSync('nikem123',    10), 'student')
+insertUser.run('Sachin Adhikari', 'sachin@ghe.edu.au', bcrypt.hashSync('sachin123',   10), 'staff')
+insertUser.run('Michael Chen',    'admin@ghe.edu.au',  bcrypt.hashSync('Password123!', 10), 'admin')
 
 const insertCourse = db.prepare(`
   INSERT INTO courses (title, level, faculty, duration_years, description, fee_per_year, intakes)

@@ -117,10 +117,9 @@ export default function Login() {
 
           <div className={styles.demoHint}>
             <p className={styles.demoTitle}>Demo accounts</p>
-            <p className={styles.demoRow}>student@ghe.edu.au — Student portal</p>
-            <p className={styles.demoRow}>staff@ghe.edu.au — Staff portal</p>
-            <p className={styles.demoRow}>admin@ghe.edu.au — Admin portal</p>
-            <p className={styles.demoRow}>Password for all: Password123!</p>
+            <p className={styles.demoRow}>nikem@ghe.edu.au / nikem123 — Student</p>
+            <p className={styles.demoRow}>sachin@ghe.edu.au / sachin123 — Staff</p>
+            <p className={styles.demoRow}>admin@ghe.edu.au / Password123! — Admin</p>
           </div>
         </div>
       </div>
