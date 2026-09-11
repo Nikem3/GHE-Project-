@@ -1,16 +1,25 @@
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import styles from '../student/Dashboard.module.css'
 
-const METRICS = [
-  { label: 'Open Enquiries',     value: '—', sub: 'Awaiting response'   },
-  { label: 'Responded Today',    value: '—', sub: 'Keep it up'          },
-  { label: 'Avg. Response Time', value: '—', sub: 'Target: 48 hrs'      },
-  { label: 'Total Students',     value: '—', sub: 'Across all enquiries'},
-]
-
 export default function StaffDashboard() {
-  const { user } = useAuth()
+  const { user, token } = useAuth()
   const firstName = user?.name?.split(' ')[0] ?? 'there'
+  const [stats, setStats] = useState(null)
+
+  useEffect(() => {
+    fetch('/api/enquiries/stats', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => (r.ok ? r.json() : null))
+      .then(setStats)
+      .catch(() => {})
+  }, [token])
+
+  const metrics = [
+    { label: 'Open Enquiries',     value: stats?.open ?? '—',           sub: 'Awaiting response'    },
+    { label: 'Responded Today',    value: stats?.respondedToday ?? '—', sub: 'Keep it up'           },
+    { label: 'Avg. Response Time', value: stats?.avgResponseHours != null ? `${stats.avgResponseHours}h` : '—', sub: 'Target: 48 hrs' },
+    { label: 'Total Students',     value: stats?.totalStudents ?? '—',  sub: 'Across all enquiries' },
+  ]
 
   return (
     <div className={styles.page}>
@@ -22,7 +31,7 @@ export default function StaffDashboard() {
         <span className={styles.roleChip}>Academic Staff</span>
       </div>
       <div className={styles.grid}>
-        {METRICS.map(({ label, value, sub }) => (
+        {metrics.map(({ label, value, sub }) => (
           <div key={label} className={styles.card}>
             <p className={styles.cardLabel}>{label}</p>
             <p className={styles.cardValue}>{value}</p>

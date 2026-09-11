@@ -1,0 +1,12 @@
+.badge {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.open        { background: var(--orange-tint); color: var(--orange); }
+.in_progress { background: #EFF6FF; color: #2563EB; }
+.resolved    { background: #F0FDF4; color: #16A34A; }

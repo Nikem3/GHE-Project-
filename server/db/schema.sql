@@ -19,3 +19,21 @@ CREATE TABLE IF NOT EXISTS courses (
   is_active      INTEGER NOT NULL DEFAULT 1,
   created_at     TEXT    NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS enquiries (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  student_id INTEGER NOT NULL REFERENCES users(id),
+  course_id  INTEGER REFERENCES courses(id),
+  subject    TEXT    NOT NULL,
+  status     TEXT    NOT NULL DEFAULT 'open' CHECK(status IN ('open','in_progress','resolved')),
+  created_at TEXT    NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS enquiry_messages (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  enquiry_id INTEGER NOT NULL REFERENCES enquiries(id) ON DELETE CASCADE,
+  sender_id  INTEGER NOT NULL REFERENCES users(id),
+  body       TEXT    NOT NULL,
+  created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+);

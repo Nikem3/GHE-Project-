@@ -1,0 +1,151 @@
+/* Shared styles for enquiry pages (student + staff) */
+.page { max-width: 860px; }
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.title { font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px; }
+.subtitle { font-size: 14px; color: var(--text-muted); margin: 0; }
+
+.newBtn {
+  padding: 11px 20px;
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.newBtn:hover { background: var(--orange-hover); }
+.newBtn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.filters { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+
+.pill {
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pillActive { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+.list { display: flex; flex-direction: column; gap: 12px; }
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.row:hover { box-shadow: var(--shadow-sm); border-color: var(--orange-border); }
+
+.rowSubject { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px; }
+.rowMeta { font-size: 13px; color: var(--text-muted); margin: 0; }
+.rowRight { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+
+.empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--bg-warm);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+}
+
+.errorMsg { color: #DC2626; font-size: 14px; }
+.loading { color: var(--text-muted); font-size: 14px; }
+
+/* ── Form ── */
+.formCard {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 28px 32px;
+}
+
+.field { margin-bottom: 20px; }
+.label { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 7px; }
+
+.input, .select, .textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.textarea { min-height: 140px; resize: vertical; }
+.input:focus, .select:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(232,83,12,0.1);
+}
+
+.errorBox {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ── Thread ── */
+.threadCard {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.msg { max-width: 85%; padding: 14px 18px; border-radius: var(--radius-lg); }
+.msgStudent { align-self: flex-start; background: var(--bg-warm); border: 1px solid var(--border); }
+.msgStaff { align-self: flex-end; background: var(--orange-tint); border: 1px solid var(--orange-border); }
+.msgHead { font-size: 12px; font-weight: 700; color: var(--text-muted); margin: 0 0 6px; }
+.msgBody { font-size: 14px; line-height: 1.6; color: var(--text-body); margin: 0; white-space: pre-wrap; }
+
+.replyRow { display: flex; gap: 12px; margin-top: 20px; align-items: flex-start; }
+.replyRow .textarea { min-height: 76px; }
+
+.backLink {
+  display: inline-block;
+  font-size: 14px;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 18px;
+}
+.backLink:hover { color: var(--orange); }
+
+.detailNote { font-size: 13px; color: var(--text-muted); margin-top: 16px; }
+.statusSelect { width: auto; padding: 9px 12px; font-size: 14px; }
