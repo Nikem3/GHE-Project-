@@ -15,6 +15,7 @@ import About           from './pages/public/About'
 import Contact         from './pages/public/Contact'
 import Blog            from './pages/public/Blog'
 import BlogPost        from './pages/public/BlogPost'
+import NotFound        from './pages/public/NotFound'
 
 import StudentDashboard  from './pages/student/Dashboard'
 import StudentEnquiries  from './pages/student/Enquiries'
@@ -51,6 +52,7 @@ export default function App() {
             <Route path="/contact"     element={<Contact />} />
             <Route path="/blog"        element={<Blog />} />
             <Route path="/blog/:id"    element={<BlogPost />} />
+            <Route path="*"            element={<NotFound />} />
           </Route>
 
           {/* ── Student portal ── */}

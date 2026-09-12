@@ -1,3 +1,10 @@
+import ComingSoon from '../../components/ComingSoon'
+
 export default function Blog() {
-  return <div style={{ padding: '2rem', color: 'var(--text-primary)' }}>Blog — coming Sprint 2</div>
+  return (
+    <ComingSoon
+      title="News & Updates"
+      note="Our news section is launching soon. In the meantime, contact us for the latest enrolment dates and announcements."
+    />
+  )
 }

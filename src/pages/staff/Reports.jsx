@@ -1,3 +1,10 @@
+import ComingSoon from '../../components/ComingSoon'
+
 export default function StaffReports() {
-  return <div style={{ padding: '2rem', color: 'var(--text-primary)' }}>Reports — coming Sprint 4</div>
+  return (
+    <ComingSoon
+      title="Reports"
+      note="Weekly, monthly, and custom-range reports arrive in Sprint 4."
+    />
+  )
 }

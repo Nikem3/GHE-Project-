@@ -17,7 +17,7 @@ export default function StudentDashboard() {
   const count = status => enquiries?.filter(e => e.status === status).length
 
   const metrics = [
-    { label: 'My Enquiries',   value: enquiries?.length ?? '—',    sub: 'Submit your first'    },
+    { label: 'My Enquiries',   value: enquiries?.length ?? '—',    sub: 'Total submitted'      },
     { label: 'Awaiting Reply', value: count('open') ?? '—',        sub: 'We respond in 48 hrs' },
     { label: 'In Progress',    value: count('in_progress') ?? '—', sub: 'Being worked on'      },
     { label: 'Resolved',       value: count('resolved') ?? '—',    sub: 'All sorted'           },
