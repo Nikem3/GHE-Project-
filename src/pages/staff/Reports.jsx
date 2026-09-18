@@ -1,10 +1,5 @@
-import ComingSoon from '../../components/ComingSoon'
+import ReportsView from '../../components/ReportsView'
 
 export default function StaffReports() {
-  return (
-    <ComingSoon
-      title="Reports"
-      note="Weekly, monthly, and custom-range reports arrive in Sprint 4."
-    />
-  )
+  return <ReportsView title="Reports" subtitle="Weekly, monthly, and custom-range enquiry analytics." />
 }

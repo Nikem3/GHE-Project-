@@ -1,3 +1,5 @@
+import ReportsView from '../../components/ReportsView'
+
 export default function AdminReports() {
-  return <div style={{ padding: '2rem', color: 'var(--text-primary)' }}>Admin Reports — coming Sprint 4</div>
+  return <ReportsView title="Reports" subtitle="Weekly, monthly, and custom-range enquiry analytics." />
 }

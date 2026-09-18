@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { test, expect } from 'vitest'
 import Hero from './Hero'
 
 function renderHero() {
@@ -11,18 +12,14 @@ test('renders main headline', () => {
   expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
 })
 
-test('renders Student CTA button linking to /login with role param', () => {
+test('renders Explore Courses CTA linking to /courses', () => {
   renderHero()
-  const btn = screen.getByRole('link', { name: /i'm a student/i })
+  const btn = screen.getByRole('link', { name: /explore courses/i })
+  expect(btn).toHaveAttribute('href', '/courses')
+})
+
+test('renders Submit an Enquiry CTA linking to student login', () => {
+  renderHero()
+  const btn = screen.getByRole('link', { name: /submit an enquiry/i })
   expect(btn).toHaveAttribute('href', '/login?role=student')
-})
-
-test('renders Staff CTA button', () => {
-  renderHero()
-  expect(screen.getByRole('link', { name: /i'm staff/i })).toBeInTheDocument()
-})
-
-test('renders Admin CTA button', () => {
-  renderHero()
-  expect(screen.getByRole('link', { name: /admin/i })).toBeInTheDocument()
 })

@@ -12,13 +12,31 @@ const ENQUIRY_TYPES = [
 
 export default function Contact() {
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const [form, setForm] = useState({ name: '', email: '', phone: '', type: '', message: '' })
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSent(true)
+    setError('')
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/contact', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(form),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to send your enquiry')
+      setSent(true)
+      setForm({ name: '', email: '', phone: '', type: '', message: '' })
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -44,6 +62,7 @@ export default function Contact() {
               Thanks! Your enquiry has been received. We'll be in touch within one business day.
             </div>
           )}
+          {error && <div className={styles.errorBox}>{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className={styles.row}>
@@ -73,7 +92,9 @@ export default function Contact() {
               <label className={styles.label}>Message</label>
               <textarea className={styles.textarea} value={form.message} onChange={e => set('message', e.target.value)} placeholder="Tell us how we can help…" required />
             </div>
-            <button type="submit" className={styles.submitBtn}>Send Enquiry</button>
+            <button type="submit" className={styles.submitBtn} disabled={submitting}>
+              {submitting ? 'Sending…' : 'Send Enquiry'}
+            </button>
           </form>
         </div>
 

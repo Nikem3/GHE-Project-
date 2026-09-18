@@ -23,6 +23,7 @@ export default function Courses() {
   const [search,      setSearch]      = useState('')
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset loading on filter change
     setLoading(true)
     const url = activeLevel ? `/api/courses?level=${activeLevel}` : '/api/courses'
     fetch(url)

@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS users (
   email         TEXT    NOT NULL UNIQUE,
   password_hash TEXT    NOT NULL,
   role          TEXT    NOT NULL CHECK(role IN ('student','staff','admin')),
+  is_active     INTEGER NOT NULL DEFAULT 1,
+  reset_token         TEXT,
+  reset_token_expires TEXT,
   created_at    TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -36,4 +39,24 @@ CREATE TABLE IF NOT EXISTS enquiry_messages (
   sender_id  INTEGER NOT NULL REFERENCES users(id),
   body       TEXT    NOT NULL,
   created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS activity_log (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  actor_id   INTEGER REFERENCES users(id),
+  actor_name TEXT    NOT NULL,
+  actor_role TEXT    NOT NULL,
+  action     TEXT    NOT NULL,
+  detail     TEXT,
+  created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS contact_messages (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  name         TEXT    NOT NULL,
+  email        TEXT    NOT NULL,
+  phone        TEXT,
+  enquiry_type TEXT    NOT NULL,
+  message      TEXT    NOT NULL,
+  created_at   TEXT    NOT NULL DEFAULT (datetime('now'))
 );

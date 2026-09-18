@@ -11,6 +11,8 @@ import Home            from './pages/public/Home/Home'
 import Courses         from './pages/public/Courses'
 import CourseDetail    from './pages/public/CourseDetail'
 import Login           from './pages/public/Login'
+import ForgotPassword  from './pages/public/ForgotPassword'
+import ResetPassword    from './pages/public/ResetPassword'
 import About           from './pages/public/About'
 import Contact         from './pages/public/Contact'
 import Blog            from './pages/public/Blog'
@@ -35,6 +37,7 @@ import AdminStaff      from './pages/admin/Staff'
 import AdminCourses    from './pages/admin/Courses'
 import AdminReports    from './pages/admin/Reports'
 import AdminActivity   from './pages/admin/Activity'
+import AdminMessages   from './pages/admin/Messages'
 import AdminSettings   from './pages/admin/Settings'
 
 export default function App() {
@@ -48,6 +51,8 @@ export default function App() {
             <Route path="/courses"     element={<Courses />} />
             <Route path="/courses/:id" element={<CourseDetail />} />
             <Route path="/login"       element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password"  element={<ResetPassword />} />
             <Route path="/about"       element={<About />} />
             <Route path="/contact"     element={<Contact />} />
             <Route path="/blog"        element={<Blog />} />
@@ -86,6 +91,7 @@ export default function App() {
               <Route path="courses"   element={<AdminCourses />} />
               <Route path="reports"   element={<AdminReports />} />
               <Route path="activity"  element={<AdminActivity />} />
+              <Route path="messages"  element={<AdminMessages />} />
               <Route path="settings"  element={<AdminSettings />} />
             </Route>
           </Route>

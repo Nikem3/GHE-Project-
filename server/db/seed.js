@@ -2,11 +2,12 @@ require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') }
 const bcrypt = require('bcryptjs')
 const db     = require('./connection')
 
+db.prepare('DELETE FROM activity_log').run()
 db.prepare('DELETE FROM enquiry_messages').run()
 db.prepare('DELETE FROM enquiries').run()
 db.prepare('DELETE FROM courses').run()
 db.prepare('DELETE FROM users').run()
-db.prepare("DELETE FROM sqlite_sequence WHERE name IN ('users','courses','enquiries','enquiry_messages')").run()
+db.prepare("DELETE FROM sqlite_sequence WHERE name IN ('users','courses','enquiries','enquiry_messages','activity_log')").run()
 
 const insertUser = db.prepare(
   'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)'

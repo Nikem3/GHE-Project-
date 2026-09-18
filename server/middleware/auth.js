@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const db  = require('../db/connection')
 
 function verifyToken(req, res, next) {
   const header = req.headers['authorization']
@@ -7,7 +8,10 @@ function verifyToken(req, res, next) {
   }
   const token = header.slice(7)
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET)
+    const payload = jwt.verify(token, process.env.JWT_SECRET)
+    const active  = db.prepare('SELECT is_active FROM users WHERE id = ?').get(payload.sub)?.is_active
+    if (active === 0) return res.status(401).json({ error: 'Unauthorised' })
+    req.user = payload
     next()
   } catch {
     return res.status(401).json({ error: 'Unauthorised' })

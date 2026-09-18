@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: ghe-portal-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/courses
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false # set to your Vercel frontend URL after it's deployed
+      - key: APP_URL
+        sync: false # same as CORS_ORIGIN — used to build password-reset links
+      - key: DB_PATH
+        value: /var/data/ghe.db
+      # Optional — enables real password-reset emails. Leave unset to log reset
+      # links to the server console instead (fine for a demo/grading run).
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+    disk:
+      name: ghe-data
+      mountPath: /var/data
+      sizeGB: 1

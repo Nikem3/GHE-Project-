@@ -1,6 +1,7 @@
 const express = require('express')
 const db      = require('../db/connection')
 const { verifyToken, requireRole } = require('../middleware/auth')
+const { logActivity } = require('../lib/activity')
 
 const router = express.Router()
 router.use(verifyToken)
@@ -129,6 +130,7 @@ router.patch('/:id', requireRole('staff', 'admin'), (req, res) => {
     "UPDATE enquiries SET status = ?, updated_at = datetime('now') WHERE id = ?"
   ).run(status, req.params.id)
   if (result.changes === 0) return res.status(404).json({ error: 'Enquiry not found' })
+  logActivity(req.user.sub, req.user.name, req.user.role, 'enquiry_status_changed', `#${req.params.id} → ${status}`)
   return res.json(getEnquiry(req.params.id))
 })
 

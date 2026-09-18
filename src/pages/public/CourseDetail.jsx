@@ -18,6 +18,7 @@ export default function CourseDetail() {
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset loading on id change
     setLoading(true)
     fetch(`/api/courses/${id}`)
       .then(r => { if (r.status === 404) { setNotFound(true); return null } return r.json() })

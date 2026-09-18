@@ -1,5 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { test, expect } from 'vitest'
 import Navbar from './Navbar'
 
 function renderNavbar() {
@@ -10,35 +11,21 @@ function renderNavbar() {
   )
 }
 
-test('renders GHE Portal brand name', () => {
+test('renders brand logo linking home', () => {
   renderNavbar()
-  expect(screen.getByText('GHE Portal')).toBeInTheDocument()
+  const logo = screen.getByRole('link', { name: /global higher education/i })
+  expect(logo).toHaveAttribute('href', '/')
 })
 
 test('renders nav links', () => {
   renderNavbar()
   expect(screen.getByRole('link', { name: /courses/i })).toBeInTheDocument()
   expect(screen.getByRole('link', { name: /about/i })).toBeInTheDocument()
-  expect(screen.getByRole('link', { name: /blog/i })).toBeInTheDocument()
   expect(screen.getByRole('link', { name: /contact/i })).toBeInTheDocument()
 })
 
-test('renders login button', () => {
+test('renders Staff Login and Student Portal CTAs', () => {
   renderNavbar()
-  expect(screen.getByRole('link', { name: /login/i })).toBeInTheDocument()
-})
-
-test('renders theme toggle button', () => {
-  renderNavbar()
-  expect(screen.getByRole('button', { name: /toggle theme/i })).toBeInTheDocument()
-})
-
-test('theme toggle switches dark to light then back to dark', () => {
-  renderNavbar()
-  document.documentElement.removeAttribute('data-theme')
-  const btn = screen.getByRole('button', { name: /toggle theme/i })
-  fireEvent.click(btn)
-  expect(document.documentElement).toHaveAttribute('data-theme', 'light')
-  fireEvent.click(btn)
-  expect(document.documentElement).toHaveAttribute('data-theme', 'dark')
+  expect(screen.getByRole('link', { name: /staff login/i })).toHaveAttribute('href', '/login?role=staff')
+  expect(screen.getByRole('link', { name: /student portal/i })).toHaveAttribute('href', '/login?role=student')
 })

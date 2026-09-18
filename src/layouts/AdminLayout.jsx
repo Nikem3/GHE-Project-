@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, BookOpen, BarChart2, Activity, Settings } from 'lucide-react'
+import { LayoutDashboard, Users, BookOpen, BarChart2, Activity, Mail, Settings } from 'lucide-react'
 import PortalLayout from './PortalLayout'
 
 const NAV = [
@@ -7,6 +7,7 @@ const NAV = [
   { to: '/admin/courses',   label: 'Courses',   icon: BookOpen        },
   { to: '/admin/reports',   label: 'Reports',   icon: BarChart2       },
   { to: '/admin/activity',  label: 'Activity',  icon: Activity        },
+  { to: '/admin/messages',  label: 'Messages',  icon: Mail            },
   { to: '/admin/settings',  label: 'Settings',  icon: Settings        },
 ]
 

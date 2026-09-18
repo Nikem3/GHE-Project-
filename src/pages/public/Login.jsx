@@ -85,7 +85,10 @@ export default function Login() {
             </div>
 
             <div className={styles.field}>
-              <label htmlFor="password" className={styles.label}>Password</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <label htmlFor="password" className={styles.label}>Password</label>
+                <Link to="/forgot-password" style={{ fontSize: 13, color: 'var(--orange)' }}>Forgot password?</Link>
+              </div>
               <div className={styles.passwordWrap}>
                 <input
                   id="password"
