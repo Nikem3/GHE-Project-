@@ -14,8 +14,8 @@ services:
         sync: false # set to your Vercel frontend URL after it's deployed
       - key: APP_URL
         sync: false # same as CORS_ORIGIN — used to build password-reset links
-      - key: DB_PATH
-        value: /var/data/ghe.db
+      # No DB_PATH/disk: free plan doesn't support persistent disks, so the
+      # SQLite file lives in the app directory and reseeds on every restart.
       # Optional — enables real password-reset emails. Leave unset to log reset
       # links to the server console instead (fine for a demo/grading run).
       - key: SMTP_HOST
@@ -28,7 +28,3 @@ services:
         sync: false
       - key: SMTP_FROM
         sync: false
-    disk:
-      name: ghe-data
-      mountPath: /var/data
-      sizeGB: 1
