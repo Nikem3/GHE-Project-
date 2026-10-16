@@ -1,5 +1,6 @@
 const express = require('express')
 const db      = require('../db/connection')
+const { logActivity } = require('../lib/activity')
 const { verifyToken, requireRole } = require('../middleware/auth')
 
 const router = express.Router()
@@ -18,6 +19,8 @@ router.post('/', (req, res) => {
   db.prepare(
     'INSERT INTO contact_messages (name, email, phone, enquiry_type, message) VALUES (?, ?, ?, ?, ?)'
   ).run(name.trim(), email.trim(), phone?.trim() || null, type, message.trim())
+  // public submitter: no user id, role 'public'
+  logActivity(null, name.trim(), 'public', 'contact_submitted', type)
   return res.status(201).json({ ok: true })
 })
 

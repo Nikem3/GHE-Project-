@@ -17,6 +17,7 @@ import About           from './pages/public/About'
 import Contact         from './pages/public/Contact'
 import Blog            from './pages/public/Blog'
 import BlogPost        from './pages/public/BlogPost'
+import Register        from './pages/public/Register'
 import NotFound        from './pages/public/NotFound'
 
 import StudentDashboard  from './pages/student/Dashboard'
@@ -39,6 +40,8 @@ import AdminReports    from './pages/admin/Reports'
 import AdminActivity   from './pages/admin/Activity'
 import AdminMessages   from './pages/admin/Messages'
 import AdminSettings   from './pages/admin/Settings'
+import AdminStudents   from './pages/admin/Students'
+import AdminAnnouncements from './pages/admin/Announcements'
 
 export default function App() {
   return (
@@ -51,6 +54,7 @@ export default function App() {
             <Route path="/courses"     element={<Courses />} />
             <Route path="/courses/:id" element={<CourseDetail />} />
             <Route path="/login"       element={<Login />} />
+            <Route path="/register"    element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password"  element={<ResetPassword />} />
             <Route path="/about"       element={<About />} />
@@ -93,6 +97,8 @@ export default function App() {
               <Route path="activity"  element={<AdminActivity />} />
               <Route path="messages"  element={<AdminMessages />} />
               <Route path="settings"  element={<AdminSettings />} />
+              <Route path="students"  element={<AdminStudents />} />
+              <Route path="announcements" element={<AdminAnnouncements />} />
             </Route>
           </Route>
         </Routes>

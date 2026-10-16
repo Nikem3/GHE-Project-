@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
+import { formatDate } from '../../lib/enquiries'
 import styles from '../student/Dashboard.module.css'
+import listStyles from '../student/Enquiries.module.css'
 
 export default function AdminDashboard() {
   const { user, token } = useAuth()
   const firstName = user?.name?.split(' ')[0] ?? 'there'
   const [data, setData] = useState(null)
+  const [failed, setFailed] = useState(false)
 
   useEffect(() => {
     const headers   = { Authorization: `Bearer ${token}` }
@@ -13,20 +16,25 @@ export default function AdminDashboard() {
     firstOfMonth.setDate(1)
     const from = firstOfMonth.toISOString().slice(0, 10)
 
+    const get = (url, opts) => fetch(url, opts).then(r => (r.ok ? r.json() : Promise.reject()))
     Promise.all([
-      fetch('/api/staff', { headers }).then(r => (r.ok ? r.json() : [])),
-      fetch('/api/courses').then(r => (r.ok ? r.json() : [])),
-      fetch(`/api/reports/enquiries?from=${from}`, { headers }).then(r => (r.ok ? r.json() : null)),
+      get('/api/staff', { headers }),
+      get('/api/courses'),
+      get(`/api/reports/enquiries?from=${from}`, { headers }),
+      get('/api/reports/enquiries', { headers }),   // all-time: current open / unassigned
+      get('/api/activity?limit=5', { headers }),
     ])
-      .then(([staff, courses, report]) => setData({ staff, courses, report }))
-      .catch(() => {})
+      .then(([staff, courses, report, overall, activity]) => setData({ staff, courses, report, overall, activity }))
+      .catch(() => setFailed(true))
   }, [token])
 
   const metrics = [
     { label: 'Total Staff',          value: data ? data.staff.filter(s => s.is_active).length : '—', sub: 'Active accounts'      },
     { label: 'Active Courses',       value: data ? data.courses.length : '—',                         sub: 'Published programs'   },
     { label: 'Enquiries This Month', value: data?.report?.totals?.total ?? '—',                        sub: 'Across all staff'     },
-    { label: 'System Status',        value: 'OK',                                                      sub: 'All services running' },
+    { label: 'Open Enquiries',       value: data?.overall.totals.open ?? '—',                         sub: 'Awaiting a reply'     },
+    { label: 'Unassigned',           value: data?.overall.totals.unassigned ?? '—',                   sub: 'No staff owner yet'   },
+    { label: 'System Status',        value: failed ? 'Degraded' : data ? 'OK' : '—',                  sub: failed ? 'Some data failed to load' : 'All services responding' },
   ]
 
   return (
@@ -47,6 +55,25 @@ export default function AdminDashboard() {
           </div>
         ))}
       </div>
+
+      <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', margin: '28px 0 12px' }}>
+        Latest Activity
+      </h2>
+      {data?.activity.length === 0 && <div className={listStyles.empty}>No activity recorded yet.</div>}
+      {data?.activity.length > 0 && (
+        <div className={listStyles.list}>
+          {data.activity.map(e => (
+            <div key={e.id} className={listStyles.row}>
+              <div>
+                <p className={listStyles.rowSubject}>{e.action.replace(/_/g, ' ')}</p>
+                <p className={listStyles.rowMeta}>
+                  {e.actor_name} ({e.actor_role}){e.detail ? ` · ${e.detail}` : ''} · {formatDate(e.created_at)}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

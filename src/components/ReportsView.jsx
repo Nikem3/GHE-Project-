@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { formatDate } from '../lib/enquiries'
+import { buildReportCsv } from '../lib/reportCsv'
 import styles from '../pages/student/Dashboard.module.css'
 import listStyles from '../pages/student/Enquiries.module.css'
 
@@ -19,12 +20,24 @@ export default function ReportsView({ title, subtitle }) {
   const [report, setReport] = useState(null)
   const [error, setError]   = useState('')
 
+  const invalidRange = from > to
+
+  const downloadCsv = () => {
+    const url = URL.createObjectURL(new Blob([buildReportCsv(report, from, to)], { type: 'text/csv' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `enquiry-report-${from}-to-${to}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   useEffect(() => {
+    if (from > to) return
     fetch(`/api/reports/enquiries?from=${from}&to=${to}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(r => (r.ok ? r.json() : Promise.reject()))
-      .then(setReport)
+      .then(r => { setReport(r); setError('') })
       .catch(() => setError('Failed to load report. Make sure the backend server is running.'))
   }, [token, from, to])
 
@@ -71,8 +84,11 @@ export default function ReportsView({ title, subtitle }) {
           <input id="reportTo" type="date" className={listStyles.input} value={to}
             onChange={e => { setPreset('custom'); setTo(e.target.value) }} />
         </div>
+        <button className={listStyles.pill} disabled={!report || invalidRange} onClick={downloadCsv}>Download CSV</button>
+        <button className={listStyles.pill} onClick={() => window.print()}>Print</button>
       </div>
 
+      {invalidRange && <p className={listStyles.errorMsg}>"From" date must be on or before the "To" date.</p>}
       {error && <p className={listStyles.errorMsg}>{error}</p>}
       {!error && !report && <p className={listStyles.loading}>Loading…</p>}
 
@@ -114,6 +130,22 @@ export default function ReportsView({ title, subtitle }) {
                 <div key={row.day} className={listStyles.row}>
                   <p className={listStyles.rowSubject}>{formatDate(row.day + ' 00:00:00')}</p>
                   <span className={listStyles.rowRight}>{row.count}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', margin: '28px 0 12px' }}>
+            Staff Activity
+          </h2>
+          {!report.byStaff?.length ? (
+            <div className={listStyles.empty}>No staff activity in this range.</div>
+          ) : (
+            <div className={listStyles.list}>
+              {report.byStaff.map(row => (
+                <div key={row.staff} className={listStyles.row}>
+                  <p className={listStyles.rowSubject}>{row.staff}</p>
+                  <span className={listStyles.rowRight}>{row.replies} replies · {row.assigned} assigned</span>
                 </div>
               ))}
             </div>

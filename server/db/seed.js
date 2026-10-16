@@ -3,11 +3,13 @@ const bcrypt = require('bcryptjs')
 const db     = require('./connection')
 
 db.prepare('DELETE FROM activity_log').run()
+db.prepare('DELETE FROM contact_messages').run()
+db.prepare('DELETE FROM announcements').run()
 db.prepare('DELETE FROM enquiry_messages').run()
 db.prepare('DELETE FROM enquiries').run()
 db.prepare('DELETE FROM courses').run()
 db.prepare('DELETE FROM users').run()
-db.prepare("DELETE FROM sqlite_sequence WHERE name IN ('users','courses','enquiries','enquiry_messages','activity_log')").run()
+db.prepare("DELETE FROM sqlite_sequence WHERE name IN ('users','courses','enquiries','enquiry_messages','activity_log','contact_messages','announcements')").run()
 
 const insertUser = db.prepare(
   'INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)'
@@ -15,6 +17,7 @@ const insertUser = db.prepare(
 insertUser.run('Nikem Parajuli',  'nikem@ghe.edu.au',  bcrypt.hashSync('nikem123',    10), 'student')
 insertUser.run('Sachin Adhikari', 'sachin@ghe.edu.au', bcrypt.hashSync('sachin123',   10), 'staff')
 insertUser.run('Michael Chen',    'admin@ghe.edu.au',  bcrypt.hashSync('Password123!', 10), 'admin')
+insertUser.run('Priya Sharma',    'priya@ghe.edu.au',  bcrypt.hashSync('priya123',    10), 'student')
 
 const insertCourse = db.prepare(`
   INSERT INTO courses (title, level, faculty, duration_years, description, fee_per_year, intakes)
@@ -72,4 +75,10 @@ insertMessage.run(2, 2, 'We do offer per-trimester payment plans for internation
 insertEnquiry.run(1, null, 'On-campus accommodation options', 'open', '-3 hours', '-3 hours')
 insertMessage.run(3, 1, 'Does GHE Adelaide offer on-campus accommodation or partner housing for first-year international students? What are the approximate costs?', '-3 hours')
 
-console.log('✓ Seeded 3 users, 8 courses, and 3 demo enquiries.')
+db.prepare('UPDATE enquiries SET assigned_to = 2 WHERE id = 2').run()
+
+const insertAnnouncement = db.prepare('INSERT INTO announcements (title, body, created_by) VALUES (?, ?, 3)')
+insertAnnouncement.run('Semester 2 intake now open', 'Applications for the July intake are open. Submit an enquiry through the portal to speak with our team.')
+insertAnnouncement.run('Orientation week schedule', 'Orientation week runs from 20 to 24 July. Check your email for your personalised timetable.')
+
+console.log('✓ Seeded 4 users, 8 courses, 3 demo enquiries, and 2 announcements.')

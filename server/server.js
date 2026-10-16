@@ -17,6 +17,8 @@ const staffRoutes     = require('./routes/staff')
 const reportsRoutes   = require('./routes/reports')
 const activityRoutes  = require('./routes/activity')
 const contactRoutes   = require('./routes/contact')
+const announcementsRoutes = require('./routes/announcements')
+const usersRoutes     = require('./routes/users')
 
 const app  = express()
 const PORT = process.env.PORT || 3001
@@ -33,7 +35,13 @@ app.use('/api/staff',     staffRoutes)
 app.use('/api/reports',   reportsRoutes)
 app.use('/api/activity',  activityRoutes)
 app.use('/api/contact',   contactRoutes)
+app.use('/api/announcements', announcementsRoutes)
+app.use('/api/users',     usersRoutes)
 
-app.listen(PORT, () => {
-  console.log(`GHE API running on http://localhost:${PORT}`)
-})
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`GHE API running on http://localhost:${PORT}`)
+  })
+}
+
+module.exports = app

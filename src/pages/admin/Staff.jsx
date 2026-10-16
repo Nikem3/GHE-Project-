@@ -18,6 +18,10 @@ export default function AdminStaff() {
   const [resetId,       setResetId]       = useState(null)
   const [resetPassword, setResetPassword] = useState('')
 
+  const [editId,   setEditId]   = useState(null)
+  const [editForm, setEditForm] = useState({ name: '', email: '' })
+  const [actionError, setActionError] = useState('')
+
   const load = () => {
     fetch('/api/staff', { headers: authHeaders })
       .then(r => (r.ok ? r.json() : Promise.reject()))
@@ -50,24 +54,45 @@ export default function AdminStaff() {
     }
   }
 
-  const toggleActive = async (id, isActive) => {
-    await fetch(`/api/staff/${id}`, {
-      method:  'PATCH',
-      headers: { 'Content-Type': 'application/json', ...authHeaders },
-      body:    JSON.stringify({ is_active: !isActive }),
-    })
-    load()
+  const patch = async (id, body) => {
+    setActionError('')
+    try {
+      const res = await fetch(`/api/staff/${id}`, {
+        method:  'PATCH',
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        body:    JSON.stringify(body),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Update failed')
+      load()
+      return true
+    } catch (err) {
+      setActionError(err.message)
+      return false
+    }
+  }
+
+  const toggleActive = (id, isActive) => patch(id, { is_active: !isActive })
+
+  const saveEdit = async id => {
+    if (await patch(id, { name: editForm.name, email: editForm.email })) setEditId(null)
   }
 
   const handleReset = async id => {
     if (resetPassword.length < 6) return
-    await fetch(`/api/staff/${id}/reset-password`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders },
-      body:    JSON.stringify({ password: resetPassword }),
-    })
-    setResetId(null)
-    setResetPassword('')
+    setActionError('')
+    try {
+      const res = await fetch(`/api/staff/${id}/reset-password`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        body:    JSON.stringify({ password: resetPassword }),
+      })
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Password reset failed')
+      setResetId(null)
+      setResetPassword('')
+    } catch (err) {
+      setActionError(err.message)
+    }
   }
 
   return (
@@ -114,6 +139,7 @@ export default function AdminStaff() {
       )}
 
       {error && <p className={styles.errorMsg}>{error}</p>}
+      {actionError && <div className={styles.errorBox} role="alert">{actionError}</div>}
       {!error && !staff && <p className={styles.loading}>Loading…</p>}
       {staff?.length === 0 && <div className={styles.empty}>No staff accounts yet.</div>}
 
@@ -126,6 +152,19 @@ export default function AdminStaff() {
                 <p className={styles.rowMeta}>
                   {s.email} · joined {formatDate(s.created_at)} · {s.replies_sent} repl{s.replies_sent === 1 ? 'y' : 'ies'} sent
                 </p>
+                {editId === s.id && (
+                  <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                    <input
+                      className={styles.input} style={{ width: 180 }} aria-label="Name"
+                      value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })}
+                    />
+                    <input
+                      className={styles.input} style={{ width: 220 }} type="email" aria-label="Email"
+                      value={editForm.email} onChange={e => setEditForm({ ...editForm, email: e.target.value })}
+                    />
+                    <button className={styles.newBtn} onClick={() => saveEdit(s.id)}>Save details</button>
+                  </div>
+                )}
                 {resetId === s.id && (
                   <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
                     <input
@@ -141,6 +180,12 @@ export default function AdminStaff() {
                 )}
               </div>
               <div className={styles.rowRight}>
+                <button
+                  className={styles.pill}
+                  onClick={() => { setEditId(editId === s.id ? null : s.id); setEditForm({ name: s.name, email: s.email }) }}
+                >
+                  Edit
+                </button>
                 <button
                   className={styles.pill}
                   onClick={() => { setResetId(resetId === s.id ? null : s.id); setResetPassword('') }}

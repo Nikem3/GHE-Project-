@@ -11,10 +11,15 @@ export default function StudentEnquiries() {
   const [error,     setError]     = useState('')
 
   useEffect(() => {
-    fetch('/api/enquiries', { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => (r.ok ? r.json() : Promise.reject()))
-      .then(setEnquiries)
-      .catch(() => setError('Failed to load enquiries. Make sure the backend server is running.'))
+    const load = () =>
+      fetch('/api/enquiries', { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => (r.ok ? r.json() : Promise.reject()))
+        .then(setEnquiries)
+        .catch(() => setError('Failed to load enquiries. Make sure the backend server is running.'))
+    load()
+    // ponytail: polling, move to SSE if latency matters
+    const t = setInterval(load, 30000)
+    return () => clearInterval(t)
   }, [token])
 
   return (

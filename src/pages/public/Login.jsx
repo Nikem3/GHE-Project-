@@ -116,6 +116,7 @@ export default function Login() {
             </button>
           </form>
 
+          <p className={styles.backLink}>New student? <Link to="/register">Create an account</Link></p>
           <p className={styles.backLink}><Link to="/">← Back to home</Link></p>
 
           <div className={styles.demoHint}>

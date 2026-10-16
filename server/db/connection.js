@@ -12,4 +12,9 @@ db.exec('PRAGMA foreign_keys = ON')
 const schema = fs.readFileSync(SCHEMA_PATH, 'utf8')
 db.exec(schema)
 
+// Existing local DBs predate enquiries.assigned_to
+if (!db.prepare('PRAGMA table_info(enquiries)').all().some(c => c.name === 'assigned_to')) {
+  db.exec('ALTER TABLE enquiries ADD COLUMN assigned_to INTEGER REFERENCES users(id)')
+}
+
 module.exports = db

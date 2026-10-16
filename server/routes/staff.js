@@ -38,14 +38,29 @@ router.post('/', (req, res) => {
 router.patch('/:id', (req, res) => {
   const staff = db.prepare("SELECT * FROM users WHERE id = ? AND role = 'staff'").get(req.params.id)
   if (!staff) return res.status(404).json({ error: 'Staff member not found' })
-  if (typeof req.body.is_active !== 'boolean') {
-    return res.status(400).json({ error: 'is_active (boolean) is required' })
+  const { name, email, is_active } = req.body
+  if (name === undefined && email === undefined && is_active === undefined) {
+    return res.status(400).json({ error: 'Nothing to update' })
   }
-  db.prepare('UPDATE users SET is_active = ? WHERE id = ?').run(req.body.is_active ? 1 : 0, staff.id)
-  logActivity(
-    req.user.sub, req.user.name, req.user.role,
-    req.body.is_active ? 'staff_reactivated' : 'staff_deactivated', staff.name
-  )
+  if (is_active !== undefined && typeof is_active !== 'boolean') {
+    return res.status(400).json({ error: 'is_active must be a boolean' })
+  }
+  if ((name !== undefined && !String(name).trim()) || (email !== undefined && !/^\S+@\S+$/.test(String(email).trim()))) {
+    return res.status(400).json({ error: 'A valid name and email are required' })
+  }
+  const newName  = name  !== undefined ? String(name).trim() : staff.name
+  const newEmail = email !== undefined ? String(email).trim().toLowerCase() : staff.email
+  if (db.prepare('SELECT id FROM users WHERE email = ? AND id != ?').get(newEmail, staff.id)) {
+    return res.status(409).json({ error: 'A user with this email already exists' })
+  }
+  db.prepare('UPDATE users SET name = ?, email = ?, is_active = ? WHERE id = ?')
+    .run(newName, newEmail, is_active === undefined ? staff.is_active : (is_active ? 1 : 0), staff.id)
+  if (is_active !== undefined && (is_active ? 1 : 0) !== staff.is_active) {
+    logActivity(req.user.sub, req.user.name, req.user.role, is_active ? 'staff_reactivated' : 'staff_deactivated', staff.name)
+  }
+  if (newName !== staff.name || newEmail !== staff.email) {
+    logActivity(req.user.sub, req.user.name, req.user.role, 'staff_updated', newName)
+  }
   return res.json({ ok: true })
 })
 

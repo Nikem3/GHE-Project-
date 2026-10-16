@@ -19,7 +19,8 @@ router.get('/enquiries', (req, res) => {
       COUNT(*) AS total,
       SUM(CASE WHEN status = 'open'        THEN 1 ELSE 0 END) AS open,
       SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) AS in_progress,
-      SUM(CASE WHEN status = 'resolved'    THEN 1 ELSE 0 END) AS resolved
+      SUM(CASE WHEN status = 'resolved'    THEN 1 ELSE 0 END) AS resolved,
+      SUM(CASE WHEN assigned_to IS NULL AND status != 'resolved' THEN 1 ELSE 0 END) AS unassigned
     FROM enquiries e ${whereClause}
   `).get(...params)
 
@@ -48,10 +49,23 @@ router.get('/enquiries', (req, res) => {
     ${whereClause}
   `).get(...params)
 
+  // Replies are counted by message date, assignments by enquiry creation date, both within the range.
+  const msgWhere = where.map(w => w.replace(/e\.created_at/, 'm.created_at'))
+  const byStaff = db.prepare(`
+    SELECT u.name AS staff,
+      (SELECT COUNT(*) FROM enquiry_messages m WHERE m.sender_id = u.id
+        ${msgWhere.length ? 'AND ' + msgWhere.join(' AND ') : ''}) AS replies,
+      (SELECT COUNT(*) FROM enquiries e WHERE e.assigned_to = u.id
+        ${where.length ? 'AND ' + where.join(' AND ') : ''}) AS assigned
+    FROM users u WHERE u.role IN ('staff','admin')
+    ORDER BY replies DESC, assigned DESC, u.name
+  `).all(...params, ...params)
+
   return res.json({
     totals: { ...totals, avgResponseHours: avg.hrs == null ? null : Math.round(avg.hrs * 10) / 10 },
     byCourse,
     byDay,
+    byStaff,
   })
 })
 

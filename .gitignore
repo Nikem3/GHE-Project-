@@ -11,3 +11,10 @@ server/ghe.db
 
 # Brainstorm artefacts
 .superpowers/
+.vercel
+.env*
+
+# Playwright
+test-results/
+playwright-report/
+e2e/.tmp/

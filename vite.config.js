@@ -5,12 +5,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'http://localhost:3001',
+      '/api': process.env.API_URL || 'http://localhost:3001',
     },
   },
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test-setup.js'],
+    exclude: ['**/node_modules/**', 'server/**', 'e2e/**'],
   },
 })

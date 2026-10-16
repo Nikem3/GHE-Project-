@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS enquiries (
   course_id  INTEGER REFERENCES courses(id),
   subject    TEXT    NOT NULL,
   status     TEXT    NOT NULL DEFAULT 'open' CHECK(status IN ('open','in_progress','resolved')),
+  assigned_to INTEGER REFERENCES users(id),
   created_at TEXT    NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT    NOT NULL DEFAULT (datetime('now'))
 );
@@ -59,4 +60,13 @@ CREATE TABLE IF NOT EXISTS contact_messages (
   enquiry_type TEXT    NOT NULL,
   message      TEXT    NOT NULL,
   created_at   TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS announcements (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  title      TEXT    NOT NULL,
+  body       TEXT    NOT NULL,
+  is_active  INTEGER NOT NULL DEFAULT 1,
+  created_by INTEGER REFERENCES users(id),
+  created_at TEXT    DEFAULT (datetime('now'))
 );

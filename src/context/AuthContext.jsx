@@ -17,19 +17,23 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false))
   }, [token])
 
-  const login = async (email, password) => {
-    const res  = await fetch('/api/auth/login', {
+  const authenticate = async (path, payload, fallback) => {
+    const res  = await fetch(path, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email, password }),
+      body:    JSON.stringify(payload),
     })
     const data = await res.json()
-    if (!res.ok) throw new Error(data.error || 'Login failed')
+    if (!res.ok) throw new Error(data.error || fallback)
     localStorage.setItem('ghe_token', data.token)
     setToken(data.token)
     setUser(data.user)
     return data.user
   }
+
+  const login    = (email, password) => authenticate('/api/auth/login', { email, password }, 'Login failed')
+  const register = (name, email, password) =>
+    authenticate('/api/auth/register', { name, email, password }, 'Registration failed')
 
   const logout = () => {
     localStorage.removeItem('ghe_token')
@@ -38,12 +42,13 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, updateUser: setUser }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook colocated with its provider; splitting would touch every import
 export function useAuth() {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useAuth must be used within AuthProvider')

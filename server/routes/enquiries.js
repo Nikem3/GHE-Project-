@@ -10,9 +10,10 @@ const VALID_STATUSES = new Set(['open', 'in_progress', 'resolved'])
 
 function getEnquiry(id) {
   return db.prepare(`
-    SELECT e.*, u.name AS student_name, c.title AS course_title
+    SELECT e.*, u.name AS student_name, c.title AS course_title, a.name AS assigned_name
     FROM enquiries e
     JOIN users u ON u.id = e.student_id
+    LEFT JOIN users a ON a.id = e.assigned_to
     LEFT JOIN courses c ON c.id = e.course_id
     WHERE e.id = ?
   `).get(id)
@@ -34,17 +35,36 @@ router.get('/', (req, res) => {
     where.push('e.status = ?')
     params.push(req.query.status)
   }
+  if (req.user.role !== 'student') {
+    if (req.query.assigned === 'me') {
+      where.push('e.assigned_to = ?')
+      params.push(req.user.sub)
+    } else if (req.query.assigned === 'unassigned') {
+      where.push('e.assigned_to IS NULL')
+    }
+    if (req.query.course_id) {
+      where.push('e.course_id = ?')
+      params.push(Number(req.query.course_id))
+    }
+  }
   const rows = db.prepare(`
-    SELECT e.id, e.subject, e.status, e.created_at, e.updated_at,
-           u.name AS student_name, c.title AS course_title,
+    SELECT e.id, e.subject, e.status, e.created_at, e.updated_at, e.assigned_to,
+           u.name AS student_name, c.title AS course_title, a.name AS assigned_name,
            (SELECT COUNT(*) FROM enquiry_messages m WHERE m.enquiry_id = e.id) AS message_count
     FROM enquiries e
     JOIN users u ON u.id = e.student_id
     LEFT JOIN courses c ON c.id = e.course_id
+    LEFT JOIN users a ON a.id = e.assigned_to
     ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
     ORDER BY e.updated_at DESC
   `).all(...params)
   return res.json(rows)
+})
+
+router.get('/assignees', requireRole('staff', 'admin'), (req, res) => {
+  return res.json(db.prepare(
+    "SELECT id, name FROM users WHERE role IN ('staff','admin') AND is_active = 1 ORDER BY name"
+  ).all())
 })
 
 router.get('/stats', requireRole('staff', 'admin'), (req, res) => {
@@ -100,6 +120,7 @@ router.post('/', requireRole('student'), (req, res) => {
   ).run(req.user.sub, course_id ?? null, subject.trim())
   db.prepare('INSERT INTO enquiry_messages (enquiry_id, sender_id, body) VALUES (?, ?, ?)')
     .run(id, req.user.sub, message.trim())
+  logActivity(req.user.sub, req.user.name, req.user.role, 'enquiry_created', `#${id} ${subject.trim()}`)
   return res.status(201).json(getEnquiry(id))
 })
 
@@ -118,19 +139,37 @@ router.post('/:id/messages', (req, res) => {
     req.user.role !== 'student' && enquiry.status === 'open' ? 'in_progress' : enquiry.status
   db.prepare("UPDATE enquiries SET status = ?, updated_at = datetime('now') WHERE id = ?")
     .run(nextStatus, enquiry.id)
+  logActivity(req.user.sub, req.user.name, req.user.role, 'enquiry_reply', `#${enquiry.id}`)
   return res.status(201).json({ ok: true, status: nextStatus })
 })
 
 router.patch('/:id', requireRole('staff', 'admin'), (req, res) => {
-  const { status } = req.body
-  if (!VALID_STATUSES.has(status)) {
+  const { status, assigned_to } = req.body
+  const hasStatus = status !== undefined
+  const hasAssignee = assigned_to !== undefined
+  if (!hasStatus && !hasAssignee) return res.status(400).json({ error: 'Nothing to update' })
+  if (hasStatus && !VALID_STATUSES.has(status)) {
     return res.status(400).json({ error: 'Invalid status' })
   }
-  const result = db.prepare(
-    "UPDATE enquiries SET status = ?, updated_at = datetime('now') WHERE id = ?"
-  ).run(status, req.params.id)
-  if (result.changes === 0) return res.status(404).json({ error: 'Enquiry not found' })
-  logActivity(req.user.sub, req.user.name, req.user.role, 'enquiry_status_changed', `#${req.params.id} → ${status}`)
+  let assignee = null
+  if (hasAssignee && assigned_to !== null) {
+    assignee = db.prepare(
+      "SELECT id, name FROM users WHERE id = ? AND role IN ('staff','admin') AND is_active = 1"
+    ).get(assigned_to)
+    if (!assignee) return res.status(400).json({ error: 'Invalid assignee' })
+  }
+  if (!getEnquiry(req.params.id)) return res.status(404).json({ error: 'Enquiry not found' })
+  if (hasStatus) {
+    db.prepare("UPDATE enquiries SET status = ?, updated_at = datetime('now') WHERE id = ?")
+      .run(status, req.params.id)
+    logActivity(req.user.sub, req.user.name, req.user.role, 'enquiry_status_changed', `#${req.params.id} → ${status}`)
+  }
+  if (hasAssignee) {
+    db.prepare("UPDATE enquiries SET assigned_to = ?, updated_at = datetime('now') WHERE id = ?")
+      .run(assignee?.id ?? null, req.params.id)
+    logActivity(req.user.sub, req.user.name, req.user.role, 'enquiry_assigned',
+      `#${req.params.id} → ${assignee ? assignee.name : 'unassigned'}`)
+  }
   return res.json(getEnquiry(req.params.id))
 })
 

@@ -33,7 +33,7 @@ router.get('/manage/all', verifyToken, requireRole('staff', 'admin'), (req, res)
   return res.json(rows.map(r => ({ ...r, intakes: JSON.parse(r.intakes) })))
 })
 
-router.post('/', verifyToken, requireRole('admin'), (req, res) => {
+router.post('/', verifyToken, requireRole('staff', 'admin'), (req, res) => {
   const { title, level, faculty, duration_years, description, fee_per_year, intakes } = req.body
   if (
     !title?.trim() || !VALID_LEVELS.has(level) || !faculty?.trim() ||
@@ -51,7 +51,10 @@ router.post('/', verifyToken, requireRole('admin'), (req, res) => {
   return res.status(201).json({ ...row, intakes: JSON.parse(row.intakes) })
 })
 
-router.patch('/:id', verifyToken, requireRole('admin'), (req, res) => {
+router.patch('/:id', verifyToken, requireRole('staff', 'admin'), (req, res) => {
+  if (req.body.level !== undefined && !VALID_LEVELS.has(req.body.level)) {
+    return res.status(400).json({ error: 'Invalid course level' })
+  }
   const course = db.prepare('SELECT * FROM courses WHERE id = ?').get(req.params.id)
   if (!course) return res.status(404).json({ error: 'Course not found' })
 

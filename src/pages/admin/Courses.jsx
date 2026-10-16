@@ -96,14 +96,14 @@ export default function AdminCourses() {
           {formError && <div className={styles.errorBox}>{formError}</div>}
 
           <div className={styles.field}>
-            <label className={styles.label}>Title</label>
-            <input className={styles.input} required value={form.title}
+            <label className={styles.label} htmlFor="course-title">Title</label>
+            <input id="course-title" className={styles.input} required value={form.title}
               onChange={e => setForm({ ...form, title: e.target.value })} />
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>Level</label>
-            <select className={styles.select} value={form.level}
+            <label className={styles.label} htmlFor="course-level">Level</label>
+            <select id="course-level" className={styles.select} value={form.level}
               onChange={e => setForm({ ...form, level: e.target.value })}>
               {Object.entries(LEVEL_LABEL).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
@@ -112,34 +112,34 @@ export default function AdminCourses() {
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>Faculty</label>
-            <input className={styles.input} required value={form.faculty}
+            <label className={styles.label} htmlFor="course-faculty">Faculty</label>
+            <input id="course-faculty" className={styles.input} required value={form.faculty}
               onChange={e => setForm({ ...form, faculty: e.target.value })} />
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>Duration (years)</label>
-            <input className={styles.input} type="number" step="0.5" min="0.5" required
+            <label className={styles.label} htmlFor="course-duration">Duration (years)</label>
+            <input id="course-duration" className={styles.input} type="number" step="0.5" min="0.5" required
               value={form.duration_years}
               onChange={e => setForm({ ...form, duration_years: e.target.value })} />
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>Fee per year (AUD)</label>
-            <input className={styles.input} type="number" min="0" required
+            <label className={styles.label} htmlFor="course-fee">Fee per year (AUD)</label>
+            <input id="course-fee" className={styles.input} type="number" min="0" required
               value={form.fee_per_year}
               onChange={e => setForm({ ...form, fee_per_year: e.target.value })} />
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>Intakes (comma-separated, e.g. Feb, Jul)</label>
-            <input className={styles.input} required value={form.intakesText}
+            <label className={styles.label} htmlFor="course-intakes">Intakes (comma-separated, e.g. Feb, Jul)</label>
+            <input id="course-intakes" className={styles.input} required value={form.intakesText}
               onChange={e => setForm({ ...form, intakesText: e.target.value })} />
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>Description</label>
-            <textarea className={styles.textarea} required value={form.description}
+            <label className={styles.label} htmlFor="course-description">Description</label>
+            <textarea id="course-description" className={styles.textarea} required value={form.description}
               onChange={e => setForm({ ...form, description: e.target.value })} />
           </div>
 

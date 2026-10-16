@@ -12,6 +12,7 @@ export default function EnquiryThread({ backTo, staff = false }) {
   const [error,   setError]   = useState('')
   const [reply,   setReply]   = useState('')
   const [sending, setSending] = useState(false)
+  const [assignees, setAssignees] = useState([])
 
   const load = useCallback(() => {
     fetch(`/api/enquiries/${id}`, { headers: { Authorization: `Bearer ${token}` } })
@@ -21,6 +22,20 @@ export default function EnquiryThread({ backTo, staff = false }) {
   }, [id, token])
 
   useEffect(load, [load])
+
+  // ponytail: polling, move to SSE if latency matters
+  useEffect(() => {
+    const t = setInterval(load, 30000)
+    return () => clearInterval(t)
+  }, [load])
+
+  useEffect(() => {
+    if (!staff) return
+    fetch('/api/enquiries/assignees', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => (r.ok ? r.json() : Promise.reject()))
+      .then(setAssignees)
+      .catch(() => {})
+  }, [staff, token])
 
   const sendReply = async e => {
     e.preventDefault()
@@ -43,15 +58,17 @@ export default function EnquiryThread({ backTo, staff = false }) {
     }
   }
 
-  const changeStatus = async status => {
+  const patch = async (body, failMsg) => {
     const res = await fetch(`/api/enquiries/${id}`, {
       method:  'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body:    JSON.stringify({ status }),
+      body:    JSON.stringify(body),
     })
     if (res.ok) load()
-    else setError('Failed to update status.')
+    else setError(failMsg)
   }
+  const changeStatus   = status => patch({ status }, 'Failed to update status.')
+  const changeAssignee = v => patch({ assigned_to: v === '' ? null : Number(v) }, 'Failed to update assignee.')
 
   if (!enquiry) {
     return (
@@ -73,10 +90,21 @@ export default function EnquiryThread({ backTo, staff = false }) {
           <h1 className={styles.title}>{enquiry.subject}</h1>
           <p className={styles.subtitle}>
             {staff ? `From ${enquiry.student_name} · ` : ''}
-            {enquiry.course_title ?? 'General enquiry'} · submitted {formatDate(enquiry.created_at)}
+            {enquiry.course_title ?? 'General enquiry'}{!staff && enquiry.assigned_name ? ` · handled by ${enquiry.assigned_name}` : ''} · submitted {formatDate(enquiry.created_at)}
           </p>
         </div>
         <div className={styles.rowRight}>
+          {staff && (
+            <select
+              value={enquiry.assigned_to ?? ''}
+              onChange={e => changeAssignee(e.target.value)}
+              className={`${styles.select} ${styles.statusSelect}`}
+              aria-label="Assignee"
+            >
+              <option value="">Unassigned</option>
+              {assignees.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+            </select>
+          )}
           {staff ? (
             <select
               value={enquiry.status}

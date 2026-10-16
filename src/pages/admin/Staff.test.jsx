@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { test, expect, afterEach, vi } from 'vitest'
 import AdminStaff from './Staff'
 
@@ -36,4 +36,33 @@ test('shows empty state when there is no staff', async () => {
   render(<AdminStaff />)
 
   expect(await screen.findByText(/no staff accounts yet/i)).toBeInTheDocument()
+})
+
+test('edits name and email inline via PATCH', async () => {
+  const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => STAFF })
+  vi.stubGlobal('fetch', fetchMock)
+  render(<AdminStaff />)
+  await screen.findByText('Sachin Adhikari')
+
+  fireEvent.click(screen.getAllByRole('button', { name: 'Edit' })[0])
+  fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Sachin A' } })
+  fireEvent.click(screen.getByRole('button', { name: /save details/i }))
+
+  await waitFor(() => {
+    const call = fetchMock.mock.calls.find(([, o]) => o?.method === 'PATCH')
+    expect(call[0]).toBe('/api/staff/2')
+    expect(JSON.parse(call[1].body)).toEqual({ name: 'Sachin A', email: 'sachin@ghe.edu.au' })
+  })
+})
+
+test('shows an error when a staff action fails', async () => {
+  const fetchMock = vi.fn()
+    .mockResolvedValueOnce({ ok: true, json: async () => STAFF })
+    .mockResolvedValueOnce({ ok: false, json: async () => ({ error: 'A user with this email already exists' }) })
+  vi.stubGlobal('fetch', fetchMock)
+  render(<AdminStaff />)
+  await screen.findByText('Sachin Adhikari')
+
+  fireEvent.click(screen.getAllByRole('button', { name: 'Deactivate' })[0])
+  expect(await screen.findByRole('alert')).toHaveTextContent(/already exists/)
 })
